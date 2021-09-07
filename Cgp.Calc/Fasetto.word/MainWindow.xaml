@@ -1,0 +1,405 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Fasetto.word"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" x:Class="Fasetto.word.MainWindow"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        AllowsTransparency="True"
+        MinWidth="{Binding WindowMinimumWidth}"
+        MinHeight="{Binding WindowMinimumHeight}"
+        x:Name="AppWindow"
+        Title="Cgpa Calculator!" Height="600" Width="900">
+
+
+    <Window.Resources>
+        <Style TargetType="{x:Type local:MainWindow}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Window}">
+
+                        <!--Outer Border with drop shadow-->
+                        <Border Padding="{Binding OuterMarginSizeThickness, FallbackValue=10}">
+
+                            <!--Main Window Outline-->
+                            <Grid>
+                                <!--Opacity Mask for corners on grid-->
+                                <Border x:Name="Container"
+                                            Background="{StaticResource BackGroundLightBrush}"
+                                            CornerRadius="{Binding WindowCornerRadius, FallbackValue=10}"/>
+
+
+                                <!--Main Window with resizeable window margin-->
+                                <Border CornerRadius="{Binding WindowCornerRadius, FallbackValue=10}"
+                                        Background="{Binding ForegroundLightBrush, FallbackValue=White}">
+                                    <Border.Effect>
+                                        <DropShadowEffect ShadowDepth="0" Opacity="0.2"/>
+                                    </Border.Effect>
+                                </Border>
+
+                                <!--Main Window Content-->
+                                <Grid>
+                                    <!--Clipping-->
+                                    <Grid.OpacityMask>
+                                        <VisualBrush Visual="{Binding ElementName=Container}"/>
+                                    </Grid.OpacityMask>
+
+                                    <Grid.RowDefinitions>
+
+                                        <!--Title Bar-->
+                                        <RowDefinition Height="{Binding TitleHeightGridLength, FallbackValue=42}"/>
+                                        <!--Drop shadow-->
+                                        <RowDefinition Height="Auto"/>
+                                        <!--Window Content-->
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid  Grid.Row="0" Panel.ZIndex="1">
+
+                                        <Grid.ColumnDefinitions>
+                                            <!--Icon-->
+                                            <ColumnDefinition Width="Auto"/>
+                                            <!--Title Caption-->
+                                            <ColumnDefinition Width="*"/>
+                                            <!-- Window Buttons-->
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <!--Icon-->
+                                        <Button Style="{StaticResource SystemIconButton}" Command="{Binding MenuCommand}">
+                                            <Image Source="Images\cgpaLogo.png"
+                                                   RenderOptions.BitmapScalingMode="Fant"/>
+                                        </Button>
+
+                                        <!--Title-->
+                                        <Viewbox Grid.Column="1">
+                                            <TextBlock Style="{StaticResource HeaderText}" Text="CGPA Calculator" />
+                                        </Viewbox>
+
+                                        <!--Window Button-->
+                                        <StackPanel Orientation="Horizontal" Grid.Column="2">
+                                            <Button Command="{Binding MinimizeCommand}" Style="{StaticResource WindowControlButton}" Content="_"/>
+                                            <Button Command="{Binding MaximizeCommand}" Style="{StaticResource WindowControlButton}" Content="[ ]"/>
+                                            <Button Command="{Binding CloseCommand}" Style="{StaticResource WindowCloseButton}" Content="X"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <!--Drop Shadow-->
+                                    <Border Grid.Row="1" Height="6" BorderThickness="0 0.2 0 0">
+                                        <!--Underline-->
+                                        <Border.BorderBrush>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="{StaticResource ForeGroundLight}" Offset="0.0"/>
+                                                <GradientStop Color="{StaticResource ForeGroundMain}" Offset="0.5"/>
+                                                <GradientStop Color="{StaticResource ForeGroundLight}" Offset="1.0"/>
+                                            </LinearGradientBrush>
+                                        </Border.BorderBrush>
+
+                                        <!--Drop Shadow-->
+                                        <Border.Background>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="{StaticResource BackGroundVeryLight}" Offset="0.0"/>
+                                                <GradientStop Color="{StaticResource ForeGroundLight}" Offset="1.0"/>
+                                            </LinearGradientBrush>
+                                        </Border.Background>
+
+                                    </Border>
+
+                                    <!--Page Content-->
+                                    <Border Grid.Row="2" Padding="{Binding InnerContentPadding}">
+                                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                                    </Border>
+
+
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome
+            ResizeBorderThickness="{Binding ResizeBorderThickness}"
+            CaptionHeight="{Binding TitleHeight}"
+            CornerRadius="0"
+            GlassFrameThickness="0"
+            />
+    </WindowChrome.WindowChrome>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Column="1"
+                    Grid.Row="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    >
+
+            <StackPanel Orientation="Horizontal"
+                            Grid.Row="0">
+                <TextBox
+                        Style="{StaticResource CourseCode}"/>
+                <ComboBox
+                    x:Name="grade1"
+                    Tag="Grade">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="A"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="B"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="C"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="D"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="E"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="F"/>
+                </ComboBox>
+                <ComboBox
+                    x:Name="cu1"
+                        Tag="Credits">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="1"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="2"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="3"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                            Grid.Row="0">
+                <TextBox
+                        Style="{StaticResource CourseCode}"/>
+                <ComboBox
+                    x:Name="grade2"
+                    Tag="Grade">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="A"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="B"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="C"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="D"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="E"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="F"/>
+                </ComboBox>
+                <ComboBox
+                    x:Name="cu2"
+                        Tag="Credits">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="1"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="2"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="3"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                            Grid.Row="0">
+                <TextBox
+                        Style="{StaticResource CourseCode}"/>
+                <ComboBox
+                    x:Name="grade3"
+                    Tag="Grade">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="A"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="B"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="C"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="D"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="E"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="F"/>
+                </ComboBox>
+                <ComboBox
+                    x:Name="cu3"
+                        Tag="Credits">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="1"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="2"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="3"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                            Grid.Row="0">
+                <TextBox
+                        Style="{StaticResource CourseCode}"/>
+                <ComboBox
+                    x:Name="grade4"
+                        Tag="Grade">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="A"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="B"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="C"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="D"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="E"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="F"/>
+                </ComboBox>
+                <ComboBox
+                    x:Name="cu4"
+                        Tag="Credits">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="1"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="2"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="3"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                            Grid.Row="0">
+                <TextBox
+                        Style="{StaticResource CourseCode}"/>
+                <ComboBox
+                    x:Name="grade5"
+                    Tag="Grade">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="A"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="B"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="C"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="D"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="E"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="F"/>
+                </ComboBox>
+                <ComboBox
+                    x:Name="cu5"
+                        Tag="Credits">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="1"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="2"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="3"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                            Grid.Row="0">
+                <TextBox
+                        Style="{StaticResource CourseCode}"/>
+                <ComboBox
+                    x:Name="grade6"
+                    Tag="Grade">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="A"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="B"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="C"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="D"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="E"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="F"/>
+                </ComboBox>
+                <ComboBox
+                    x:Name="cu6"
+                        Tag="Credits">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="1"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="2"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="3"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                            Grid.Row="0">
+                <TextBox
+                        Style="{StaticResource CourseCode}"/>
+                <ComboBox
+                    x:Name="grade7"
+                    Tag="Grade">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="A"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="B"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="C"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="D"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="E"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="F"/>
+                </ComboBox>
+                <ComboBox
+                    x:Name="cu7"
+                        Tag="Credits">
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="1"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="2"/>
+                    <ComboBoxItem Style="{StaticResource combostyle}"
+                                  Content="3"/>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="2"
+              Grid.Column="1"
+              HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button
+                x:Name="CalcButton"
+                Click="CalcButton_Click"
+                Grid.Column="0"
+                Margin="14 45 11 0"
+                Content="Calculate"
+                Style="{StaticResource CalcButton}"/>
+            <TextBox 
+                Grid.Column="1"
+                Style="{StaticResource cgpaStyle}"
+                Text="CGPA"/>
+            <TextBlock
+                x:Name="Gpa"
+                Grid.Column="1"
+                Text="0.00"
+                Margin="30,30,30,10"
+                FontFamily="{StaticResource LatoBold}"
+                Foreground="White"
+                FontSize="40"
+                TextWrapping="Wrap"
+                Height="40"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                TextAlignment="Center"
+                />
+        </Grid>
+    </Grid>
+</Window>
